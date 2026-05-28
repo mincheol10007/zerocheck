@@ -84,3 +84,10 @@
 
 ## 🚦 Evaluator 종합 채점 (20:50)
 - V1 ✅ V2 ✅ V3 ✅ V4 ✅ V5 ✅ · **수익 추적 라이브** · V6 ⏳ 발행만 남음.
+
+## 20:55 쿠팡 파트너스 정책 고지
+- 집사 요청 → 작고 회색 *"이 사이트는 쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받습니다."* 3곳 박음:
+  - `assets/app.js` 모달 (affiliate URL일 때만)
+  - `assets/header.js` 푸터 (전 페이지 상시)
+  - `docs/POST-draft.md` 본문 글 최하단
+- 8번째 vercel deploy → zerochecker 라이브.
