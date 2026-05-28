@@ -91,3 +91,20 @@
   - `assets/header.js` 푸터 (전 페이지 상시)
   - `docs/POST-draft.md` 본문 글 최하단
 - 8번째 vercel deploy → zerochecker 라이브.
+
+## 21:00~ 집사 라이브 테스트
+- 집사가 *코카콜라 제로* 모달 → 쿠팡 버튼 직접 클릭 → 결과 URL 확인.
+- 우리 추적 코드 라이브 검증: `lptag=AF1525657` · `subid=zerocheck` · `wRef=zerochecker.vercel.app` 모두 박힘.
+
+## 🏁 종료 (2026-05-29 00:05)
+- 보상 계약: **5/6 PASS · V6(지피터스 발행) = 이월**
+- V1~V5 ✅ + 쿠팡 제휴 라이브 + 정책 고지 3곳
+- V6 = *지피터스 게시글 발행*은 *집사 컨디션·다음 트랙*으로 이월 (HITL 게이트, 캐시 자동 발행 X)
+- 산출물:
+  - 사이트: https://zerochecker.vercel.app
+  - Repo: https://github.com/mincheol10007/zerocheck (커밋 14개)
+  - 문서: REWARD-CONTRACT v1.0 · ORCHESTRATION-MAPPING · OTIS-CRAWL-PLAN · COUPANG-AFFILIATE-GUIDE · POST-draft v3
+  - 데이터: 음료 10·성분 17·affiliate URL 10/10
+  - 인사이트: 🌿 천연감미료 필터 = 0종 / 안심 1위 칠성사이다 / 위험 1위 닥터페퍼
+  - 수익 추적: subid=zerocheck 라이브
+- 다음 트랙(별도 보상계약): V6 발행 / 오티스 위임 / deployment protection / 모카 복귀 / subid 분리
