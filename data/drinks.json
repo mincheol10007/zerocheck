@@ -9,8 +9,20 @@
       "brand": "코카콜라",
       "category": "콜라",
       "volume_ml": 355,
-      "ingredient_ids": ["water", "caramel-color", "phosphoric-acid", "aspartame", "ace-k", "caffeine", "sodium-citrate", "natural-flavor"],
-      "tagline": "오리지널 콜라 맛 · 칼로리 0"
+      "ingredient_ids": [
+        "water",
+        "caramel-color",
+        "phosphoric-acid",
+        "aspartame",
+        "ace-k",
+        "caffeine",
+        "sodium-citrate",
+        "natural-flavor"
+      ],
+      "tagline": "오리지널 콜라 맛 · 칼로리 0",
+      "affiliate_url": "https://link.coupang.com/a/d7z0Zsuf24",
+      "affiliate_landing": "https://link.coupang.com/re/AFFSRP?lptag=AF1525657&subid=zerocheck&pageKey=%EC%BD%94%EC%B9%B4%EC%BD%9C%EB%9D%BC%20%EC%A0%9C%EB%A1%9C&traceid=V0-183-2814276de3f9316d",
+      "affiliate_updated_at": "2026-05-28T11:45:08.652Z"
     },
     {
       "id": "pepsi-zero-lime",
@@ -18,8 +30,20 @@
       "brand": "펩시코",
       "category": "콜라",
       "volume_ml": 355,
-      "ingredient_ids": ["water", "caramel-color", "phosphoric-acid", "aspartame", "ace-k", "caffeine", "citric-acid", "natural-flavor"],
-      "tagline": "라임 향 · 칼로리 0"
+      "ingredient_ids": [
+        "water",
+        "caramel-color",
+        "phosphoric-acid",
+        "aspartame",
+        "ace-k",
+        "caffeine",
+        "citric-acid",
+        "natural-flavor"
+      ],
+      "tagline": "라임 향 · 칼로리 0",
+      "affiliate_url": "https://link.coupang.com/a/d7z02LZQdM",
+      "affiliate_landing": "https://link.coupang.com/re/AFFSRP?lptag=AF1525657&subid=zerocheck&pageKey=%ED%8E%A9%EC%8B%9C%20%EC%A0%9C%EB%A1%9C%EC%8A%88%EA%B0%80%20%EB%9D%BC%EC%9E%84&traceid=V0-183-4bc92fa6765852d7",
+      "affiliate_updated_at": "2026-05-28T11:45:09.426Z"
     },
     {
       "id": "chilsung-cider-zero",
@@ -27,8 +51,18 @@
       "brand": "롯데칠성",
       "category": "사이다",
       "volume_ml": 355,
-      "ingredient_ids": ["water", "citric-acid", "sucralose", "ace-k", "sodium-citrate", "natural-flavor"],
-      "tagline": "탄산 사이다 · 칼로리 0 · 무카페인"
+      "ingredient_ids": [
+        "water",
+        "citric-acid",
+        "sucralose",
+        "ace-k",
+        "sodium-citrate",
+        "natural-flavor"
+      ],
+      "tagline": "탄산 사이다 · 칼로리 0 · 무카페인",
+      "affiliate_url": "https://link.coupang.com/a/d7z056fPoG",
+      "affiliate_landing": "https://link.coupang.com/re/AFFSRP?lptag=AF1525657&subid=zerocheck&pageKey=%EC%B9%A0%EC%84%B1%EC%82%AC%EC%9D%B4%EB%8B%A4%20%EC%A0%9C%EB%A1%9C&traceid=V0-183-481020666ae08124",
+      "affiliate_updated_at": "2026-05-28T11:45:10.209Z"
     },
     {
       "id": "sprite-zero",
@@ -36,8 +70,18 @@
       "brand": "코카콜라",
       "category": "사이다",
       "volume_ml": 355,
-      "ingredient_ids": ["water", "citric-acid", "aspartame", "ace-k", "sodium-citrate", "natural-flavor"],
-      "tagline": "레몬·라임 · 무카페인"
+      "ingredient_ids": [
+        "water",
+        "citric-acid",
+        "aspartame",
+        "ace-k",
+        "sodium-citrate",
+        "natural-flavor"
+      ],
+      "tagline": "레몬·라임 · 무카페인",
+      "affiliate_url": "https://link.coupang.com/a/d7z09kSZ2a",
+      "affiliate_landing": "https://link.coupang.com/re/AFFSRP?lptag=AF1525657&subid=zerocheck&pageKey=%EC%8A%A4%ED%94%84%EB%9D%BC%EC%9D%B4%ED%8A%B8%20%EC%A0%9C%EB%A1%9C&traceid=V0-183-416e495dabe23d10",
+      "affiliate_updated_at": "2026-05-28T11:45:10.982Z"
     },
     {
       "id": "dr-pepper-zero",
@@ -45,8 +89,19 @@
       "brand": "코카콜라",
       "category": "콜라",
       "volume_ml": 355,
-      "ingredient_ids": ["water", "caramel-color", "phosphoric-acid", "aspartame", "caffeine", "sodium-benzoate", "artificial-flavor"],
-      "tagline": "23가지 향 블렌드"
+      "ingredient_ids": [
+        "water",
+        "caramel-color",
+        "phosphoric-acid",
+        "aspartame",
+        "caffeine",
+        "sodium-benzoate",
+        "artificial-flavor"
+      ],
+      "tagline": "23가지 향 블렌드",
+      "affiliate_url": "https://link.coupang.com/a/d7z1cBkd6i",
+      "affiliate_landing": "https://link.coupang.com/re/AFFSRP?lptag=AF1525657&subid=zerocheck&pageKey=%EB%8B%A5%ED%84%B0%ED%8E%98%ED%8D%BC%20%EC%A0%9C%EB%A1%9C&traceid=V0-183-1cbcafa59e722c36",
+      "affiliate_updated_at": "2026-05-28T11:45:11.752Z"
     },
     {
       "id": "monster-zero",
@@ -54,8 +109,21 @@
       "brand": "몬스터",
       "category": "에너지",
       "volume_ml": 355,
-      "ingredient_ids": ["water", "citric-acid", "taurine", "caffeine", "sucralose", "ace-k", "niacinamide", "sodium-citrate", "artificial-flavor"],
-      "tagline": "강력 에너지 · 칼로리 0"
+      "ingredient_ids": [
+        "water",
+        "citric-acid",
+        "taurine",
+        "caffeine",
+        "sucralose",
+        "ace-k",
+        "niacinamide",
+        "sodium-citrate",
+        "artificial-flavor"
+      ],
+      "tagline": "강력 에너지 · 칼로리 0",
+      "affiliate_url": "https://link.coupang.com/a/d7z1f5DCdo",
+      "affiliate_landing": "https://link.coupang.com/re/AFFSRP?lptag=AF1525657&subid=zerocheck&pageKey=%EB%AA%AC%EC%8A%A4%ED%84%B0%20%EC%A0%9C%EB%A1%9C%20%EC%8A%88%EA%B0%80&traceid=V0-183-ebcf399cd6eda33b",
+      "affiliate_updated_at": "2026-05-28T11:45:12.556Z"
     },
     {
       "id": "redbull-sf",
@@ -63,8 +131,20 @@
       "brand": "레드불",
       "category": "에너지",
       "volume_ml": 250,
-      "ingredient_ids": ["water", "citric-acid", "taurine", "caffeine", "aspartame", "ace-k", "niacinamide", "natural-flavor"],
-      "tagline": "에너지드링크 원조 · 칼로리 0"
+      "ingredient_ids": [
+        "water",
+        "citric-acid",
+        "taurine",
+        "caffeine",
+        "aspartame",
+        "ace-k",
+        "niacinamide",
+        "natural-flavor"
+      ],
+      "tagline": "에너지드링크 원조 · 칼로리 0",
+      "affiliate_url": "https://link.coupang.com/a/d7z1jEYslE",
+      "affiliate_landing": "https://link.coupang.com/re/AFFSRP?lptag=AF1525657&subid=zerocheck&pageKey=%EB%A0%88%EB%93%9C%EB%B6%88%20%EC%8A%88%EA%B0%80%ED%94%84%EB%A6%AC&traceid=V0-183-684ded8e5eb33ac2",
+      "affiliate_updated_at": "2026-05-28T11:45:13.328Z"
     },
     {
       "id": "fanta-zero",
@@ -72,8 +152,18 @@
       "brand": "코카콜라",
       "category": "탄산",
       "volume_ml": 355,
-      "ingredient_ids": ["water", "citric-acid", "aspartame", "ace-k", "sodium-benzoate", "natural-flavor"],
-      "tagline": "오렌지 향 · 무카페인 · 칼로리 0"
+      "ingredient_ids": [
+        "water",
+        "citric-acid",
+        "aspartame",
+        "ace-k",
+        "sodium-benzoate",
+        "natural-flavor"
+      ],
+      "tagline": "오렌지 향 · 무카페인 · 칼로리 0",
+      "affiliate_url": "https://link.coupang.com/a/d7z1m05E04",
+      "affiliate_landing": "https://link.coupang.com/re/AFFSRP?lptag=AF1525657&subid=zerocheck&pageKey=%ED%99%98%ED%83%80%20%EC%98%A4%EB%A0%8C%EC%A7%80%20%EC%A0%9C%EB%A1%9C&traceid=V0-183-f241acdeb8f3edb2",
+      "affiliate_updated_at": "2026-05-28T11:45:14.100Z"
     },
     {
       "id": "powerade-zero",
@@ -81,8 +171,18 @@
       "brand": "코카콜라",
       "category": "스포츠",
       "volume_ml": 600,
-      "ingredient_ids": ["water", "citric-acid", "sucralose", "ace-k", "sodium-citrate", "natural-flavor"],
-      "tagline": "이온 음료 · 무카페인 · 칼로리 0"
+      "ingredient_ids": [
+        "water",
+        "citric-acid",
+        "sucralose",
+        "ace-k",
+        "sodium-citrate",
+        "natural-flavor"
+      ],
+      "tagline": "이온 음료 · 무카페인 · 칼로리 0",
+      "affiliate_url": "https://link.coupang.com/a/d7z1qnFBim",
+      "affiliate_landing": "https://link.coupang.com/re/AFFSRP?lptag=AF1525657&subid=zerocheck&pageKey=%ED%8C%8C%EC%9B%8C%EC%97%90%EC%9D%B4%EB%93%9C%20%EC%A0%9C%EB%A1%9C&traceid=V0-183-7b9defd7be7244f1",
+      "affiliate_updated_at": "2026-05-28T11:45:14.875Z"
     },
     {
       "id": "gatorade-zero",
@@ -90,8 +190,19 @@
       "brand": "펩시코",
       "category": "스포츠",
       "volume_ml": 591,
-      "ingredient_ids": ["water", "citric-acid", "sucralose", "ace-k", "sodium-citrate", "natural-flavor"],
-      "tagline": "이온 음료 · 무카페인 · 칼로리 0"
+      "ingredient_ids": [
+        "water",
+        "citric-acid",
+        "sucralose",
+        "ace-k",
+        "sodium-citrate",
+        "natural-flavor"
+      ],
+      "tagline": "이온 음료 · 무카페인 · 칼로리 0",
+      "affiliate_url": "https://link.coupang.com/a/d7z1tQPxTg",
+      "affiliate_landing": "https://link.coupang.com/re/AFFSRP?lptag=AF1525657&subid=zerocheck&pageKey=%EA%B2%8C%ED%86%A0%EB%A0%88%EC%9D%B4%20%EC%A0%9C%EB%A1%9C&traceid=V0-183-a77c17763426eec6",
+      "affiliate_updated_at": "2026-05-28T11:45:15.696Z"
     }
-  ]
+  ],
+  "affiliate_built_at": "2026-05-28T11:45:16.396Z"
 }

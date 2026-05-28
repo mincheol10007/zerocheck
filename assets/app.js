@@ -119,10 +119,13 @@
     `;
   }
 
-  // --- Coupang search link placeholder ---
-  // 향후 쿠팡 파트너스 Deeplink API 자동 변환 자리 — 지금은 단순 검색 URL.
+  // --- Coupang link ---
+  // 빌드 타임에 박힌 affiliate_url 우선, 없으면 단순 검색 URL fallback.
   function coupangSearchUrl(drinkName) {
     return `https://www.coupang.com/np/search?q=${encodeURIComponent(drinkName)}`;
+  }
+  function coupangBuyUrl(drink) {
+    return drink && drink.affiliate_url ? drink.affiliate_url : coupangSearchUrl(drink.name);
   }
 
   // --- Detail modal ---
@@ -163,7 +166,8 @@
   function detailModalHTML(drink, ingredientMap, labels) {
     const ings = ingredientsFor(drink, ingredientMap);
     const top = highestRisk(drink, ingredientMap);
-    const coupangUrl = coupangSearchUrl(drink.name);
+    const coupangUrl = coupangBuyUrl(drink);
+    const isAffiliate = !!drink.affiliate_url;
     return `
       <div id="zc-modal-backdrop" class="fixed inset-0 z-50 flex items-start sm:items-center justify-center bg-black/60 p-2 sm:p-6 overflow-y-auto" role="dialog" aria-modal="true" aria-labelledby="zc-modal-title">
         <div id="zc-modal-panel" class="relative w-full max-w-3xl rounded-2xl bg-white dark:bg-zinc-800 shadow-2xl border border-zinc-200 dark:border-zinc-700 my-4">
@@ -207,8 +211,8 @@
             <div class="text-xs text-zinc-500 dark:text-zinc-400">
               ※ 위험도 색은 참고용. 자세한 기준은 <a href="info.html" class="underline hover:text-emerald-600">정보</a> 페이지 참고.
             </div>
-            <a href="${coupangUrl}" target="_blank" rel="noopener" class="inline-flex items-center justify-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500">
-              <span>🛒</span><span>쿠팡에서 보기</span>
+            <a href="${coupangUrl}" target="_blank" rel="noopener sponsored" class="inline-flex items-center justify-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+              <span>🛒</span><span>쿠팡에서 보기${isAffiliate ? '<sup class="ml-1 text-[10px] font-normal opacity-75">제휴</sup>' : ''}</span>
             </a>
           </div>
         </div>
@@ -518,6 +522,7 @@
     sortDrinks,
     renderDrinks,
     coupangSearchUrl,
+    coupangBuyUrl,
     openDrinkDetail,
     closeDrinkDetail,
     bindDrinkCardClicks,
