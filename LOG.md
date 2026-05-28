@@ -25,7 +25,7 @@
 - **18:11** UI 빌드 sub-agent 백그라운드 띄움 (HTML/JS/Tailwind CDN 정적·index/compare/search 3 페이지). agentId: a3c0fc2c9d3a41667. 완료 알림 대기.
 - **18:16** sub-agent 완료. index/compare/search.html + assets/app.js + assets/header.js + vercel.json. V2·V3·V5 자체검증 PASS.
 - **18:18** UI commit·push (`6582cbe`) → GitHub.
-- **18:28** ✅ Vercel 배포 (scope mincheol10007s-projects) — production URL **https://zerocheck-three.vercel.app**.
+- **18:28** ✅ Vercel 배포 (scope mincheol10007s-projects) — production URL **https://zerochecker.vercel.app**.
 - **18:30** ✅ V1 PASS — `/`·`/compare.html`·`/search.html`·`/data/drinks.json` 모두 200.
 
 ## 🚦 Evaluator 1차 채점
@@ -39,12 +39,12 @@
 **5/6 PASS** — V6만 남음. 보상 계약 stop 조건의 *부분 PASS*. 21:00 V6 PASS면 6/6 종료.
 
 ## 18:49~18:55 집사 추가 요구
-- 도메인 zero-check 재시도 → `zero-check.vercel.app` 잡힘 (다른 유저). 다른 alias 4개 잡았지만 401 deployment protection. *zerocheck-three.vercel.app*가 메인.
+- 도메인 zero-check 재시도 → `zero-check.vercel.app` 잡힘 (다른 유저). 다른 alias 4개 잡았지만 401 deployment protection. *zerochecker.vercel.app*가 메인.
 - 사이트 보강 — 제품 클릭 → 성분표 모달 / 정보 설명 탭 / 쿠팡 링크 placeholder.
 - 오티스 크롤링 계획 + 쿠팡 제휴 자동화 가능 여부 답변.
 
 ## 18:55 분배·진행
-- ✅ 도메인 시도 종료 — zerocheck-three.vercel.app 확정.
+- ✅ 도메인 시도 종료 — zerochecker.vercel.app 확정.
 - ✅ 쿠팡 Deeplink API 자동 변환 *가능 확인* (API key 필요 — 다음 트랙).
 - 🔄 사이트 보강 sub-agent #2 띄움 (모달·info.html·쿠팡 placeholder). agentId: ada1c78ed2de55c05.
 - ✅ `docs/OTIS-CRAWL-PLAN.md v1.0` 작성 — 보상계약·쿼리·스택·거버넌스·위임 메시지.
