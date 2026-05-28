@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>정보 · 제로체크</title>
+  <meta name="description" content="성분 사전 — 왜 어떤 성분은 좋고, 어떤 성분은 나쁜가?" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root { font-family: system-ui, -apple-system, "Apple SD Gothic Neo", "Pretendard", "Noto Sans KR", sans-serif; }
+    html { scroll-behavior: smooth; }
+  </style>
+</head>
+<body class="bg-zinc-50 text-zinc-900 dark:bg-zinc-900 dark:text-zinc-100 min-h-screen flex flex-col">
+  <div id="header-slot"></div>
+
+  <main class="mx-auto w-full max-w-5xl flex-1 px-4 py-6">
+    <section class="mb-6">
+      <h1 class="text-2xl sm:text-3xl font-bold text-zinc-900 dark:text-zinc-50">성분 사전</h1>
+      <p class="mt-1 text-zinc-600 dark:text-zinc-300">왜 어떤 성분은 좋고, 어떤 성분은 나쁜가?</p>
+    </section>
+
+    <!-- 위험도 등급 안내 -->
+    <section class="mb-8 rounded-2xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 p-5 shadow-sm">
+      <h2 class="mb-3 text-lg font-semibold text-zinc-900 dark:text-zinc-50">위험도 등급은 어떻게 정해지나요?</h2>
+      <div id="risk-guide" class="grid grid-cols-1 gap-3 sm:grid-cols-3"></div>
+      <p id="risk-disclaimer" class="mt-4 text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed"></p>
+    </section>
+
+    <!-- 카테고리 인덱스 -->
+    <section class="mb-6">
+      <h2 class="mb-3 text-lg font-semibold text-zinc-900 dark:text-zinc-50">카테고리</h2>
+      <div id="cat-index" class="flex flex-wrap gap-2"></div>
+    </section>
+
+    <!-- 카테고리별 성분 그룹 -->
+    <section id="groups" class="space-y-10">
+      <div class="text-sm text-zinc-500">로딩 중…</div>
+    </section>
+  </main>
+
+  <div id="footer-slot"></div>
+
+  <script src="assets/app.js"></script>
+  <script src="assets/header.js"></script>
+  <script>
+    (async function () {
+      document.getElementById("header-slot").innerHTML = window.zcChrome.renderHeader("info");
+      try {
+        const { ingredients, labels, disclaimer } = await window.zc.loadAll();
+        document.getElementById("footer-slot").innerHTML = window.zcChrome.renderFooter(disclaimer);
+
+        // 위험도 안내
+        document.getElementById("risk-guide").innerHTML = Object.entries(labels)
+          .map(([k, l]) => `
+            <div class="rounded-xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-900/40 p-3">
+              <div class="flex items-center gap-2">
+                <span class="inline-flex h-6 w-6 items-center justify-center rounded-full text-white text-xs" style="background:${l.color};">${l.emoji}</span>
+                <div class="text-sm font-semibold text-zinc-900 dark:text-zinc-50">${l.label_ko}
+                  <span class="text-xs font-normal text-zinc-500">(${l.label_en})</span>
+                </div>
+              </div>
+              <p class="mt-2 text-xs text-zinc-600 dark:text-zinc-300 leading-relaxed">${l.summary}</p>
+            </div>
+          `)
+          .join("");
+        document.getElementById("risk-disclaimer").textContent = disclaimer || "";
+
+        // 카테고리 그룹
+        const groups = window.zc.groupIngredientsByCategory(ingredients);
+        // 카테고리 표시 순서 (사용자 요청 명시 + 그 외는 알파벳 정렬로 추가)
+        const preferredOrder = [
+          "인공감미료", "천연감미료", "당알코올", "산도조절제",
+          "각성제", "색소", "보존료", "향료",
+          "아미노산", "비타민", "베이스", "희소당"
+        ];
+        const allCats = Object.keys(groups);
+        const orderedCats = [
+          ...preferredOrder.filter((c) => allCats.includes(c)),
+          ...allCats.filter((c) => !preferredOrder.includes(c)).sort(),
+        ];
+
+        // 카테고리 인덱스 (앵커)
+        function slug(s) {
+          return "cat-" + encodeURIComponent(s).replace(/%/g, "");
+        }
+        document.getElementById("cat-index").innerHTML = orderedCats
+          .map((c) => `<a href="#${slug(c)}" class="rounded-full border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-3 py-1 text-xs text-zinc-700 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-700">${c} <span class="text-zinc-400">${groups[c].length}</span></a>`)
+          .join("");
+
+        // 성분 카드 (info 페이지용 — detail 까지 포함)
+        function infoCard(ing) {
+          const l = labels[ing.risk_level] || labels.green;
+          return `
+            <div class="rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 p-4 shadow-sm">
+              <div class="flex items-start justify-between gap-2">
+                <div>
+                  <div class="font-semibold text-zinc-900 dark:text-zinc-50">${ing.name_ko}</div>
+                  <div class="text-xs text-zinc-500 dark:text-zinc-400">${ing.name_en}</div>
+                </div>
+                <span class="shrink-0 inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium text-white" style="background:${l.color};">${l.emoji} ${l.label_ko}</span>
+              </div>
+              <p class="mt-2 text-sm text-zinc-700 dark:text-zinc-200">${ing.summary}</p>
+              <p class="mt-1 text-xs text-zinc-500 dark:text-zinc-400 leading-relaxed">${ing.detail}</p>
+              <p class="mt-2 text-[10px] uppercase tracking-wide text-zinc-400">출처 · ${ing.source}</p>
+            </div>
+          `;
+        }
+
+        // 카테고리별 섹션 렌더
+        document.getElementById("groups").innerHTML = orderedCats
+          .map((c) => `
+            <section id="${slug(c)}" class="scroll-mt-20">
+              <div class="mb-3 flex items-center justify-between">
+                <h2 class="text-lg font-semibold text-zinc-900 dark:text-zinc-50">${c}
+                  <span class="text-xs font-normal text-zinc-500">(${groups[c].length}개)</span>
+                </h2>
+                <a href="#" class="text-xs text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200">맨 위로 ↑</a>
+              </div>
+              <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                ${groups[c].map(infoCard).join("")}
+              </div>
+            </section>
+          `)
+          .join("");
+      } catch (e) {
+        console.error(e);
+        document.getElementById("groups").innerHTML = `<div class="text-sm text-red-500">데이터 로드 실패: ${e.message}</div>`;
+        document.getElementById("footer-slot").innerHTML = window.zcChrome.renderFooter("");
+      }
+    })();
+  </script>
+</body>
+</html>

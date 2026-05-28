@@ -5,6 +5,7 @@
       { id: "home", label: "홈", href: "index.html" },
       { id: "compare", label: "비교", href: "compare.html" },
       { id: "search", label: "검색", href: "search.html" },
+      { id: "info", label: "정보", href: "info.html" },
     ];
     const linkClass = (id) =>
       `px-3 py-1.5 rounded-md text-sm font-medium transition ${

@@ -100,7 +100,7 @@
   function drinkCard(drink, ingredientMap, labels) {
     const top = highestRisk(drink, ingredientMap);
     return `
-      <a href="search.html?q=${encodeURIComponent(drink.name)}" class="group block rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 p-4 shadow-sm hover:shadow-md transition">
+      <button type="button" data-drink-id="${drink.id}" class="zc-drink-card group block w-full text-left rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 p-4 shadow-sm hover:shadow-md transition focus:outline-none focus:ring-2 focus:ring-emerald-500">
         <div class="flex items-start justify-between gap-2">
           <div>
             <div class="font-bold text-zinc-900 dark:text-zinc-50 group-hover:underline">${drink.name}</div>
@@ -115,8 +115,175 @@
         <div class="mt-3">
           ${riskBarHTML(drink, ingredientMap, labels)}
         </div>
-      </a>
+      </button>
     `;
+  }
+
+  // --- Coupang search link placeholder ---
+  // 향후 쿠팡 파트너스 Deeplink API 자동 변환 자리 — 지금은 단순 검색 URL.
+  function coupangSearchUrl(drinkName) {
+    return `https://www.coupang.com/np/search?q=${encodeURIComponent(drinkName)}`;
+  }
+
+  // --- Detail modal ---
+  function escapeHtml(s) {
+    return String(s == null ? "" : s)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#39;");
+  }
+
+  function ingredientRowHTML(ing, labels) {
+    const l = labels[ing.risk_level] || labels.green;
+    // 좋은 성분 (green) 은 옅은 emerald 톤, 나쁜 성분 (yellow/red) 은 옅은 amber/red 톤
+    const rowBg =
+      ing.risk_level === "green"
+        ? "bg-emerald-50 dark:bg-emerald-900/20"
+        : ing.risk_level === "yellow"
+        ? "bg-amber-50 dark:bg-amber-900/20"
+        : "bg-red-50 dark:bg-red-900/20";
+    return `
+      <tr class="${rowBg} align-top">
+        <td class="px-3 py-2 text-sm">
+          <div class="font-semibold text-zinc-900 dark:text-zinc-50">${escapeHtml(ing.name_ko)}</div>
+          <div class="text-xs text-zinc-500 dark:text-zinc-400">${escapeHtml(ing.name_en)}</div>
+        </td>
+        <td class="px-3 py-2 text-xs text-zinc-700 dark:text-zinc-200 whitespace-nowrap">${escapeHtml(ing.category)}</td>
+        <td class="px-3 py-2 whitespace-nowrap">
+          <span class="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium text-white" style="background:${l.color};">${l.emoji} ${escapeHtml(l.label_ko)}</span>
+        </td>
+        <td class="px-3 py-2 text-sm text-zinc-700 dark:text-zinc-200">${escapeHtml(ing.summary)}</td>
+        <td class="px-3 py-2 text-[10px] uppercase tracking-wide text-zinc-500 dark:text-zinc-400 whitespace-nowrap">${escapeHtml(ing.source)}</td>
+      </tr>
+    `;
+  }
+
+  function detailModalHTML(drink, ingredientMap, labels) {
+    const ings = ingredientsFor(drink, ingredientMap);
+    const top = highestRisk(drink, ingredientMap);
+    const coupangUrl = coupangSearchUrl(drink.name);
+    return `
+      <div id="zc-modal-backdrop" class="fixed inset-0 z-50 flex items-start sm:items-center justify-center bg-black/60 p-2 sm:p-6 overflow-y-auto" role="dialog" aria-modal="true" aria-labelledby="zc-modal-title">
+        <div id="zc-modal-panel" class="relative w-full max-w-3xl rounded-2xl bg-white dark:bg-zinc-800 shadow-2xl border border-zinc-200 dark:border-zinc-700 my-4">
+          <button type="button" id="zc-modal-close" aria-label="닫기" class="absolute top-3 right-3 inline-flex h-8 w-8 items-center justify-center rounded-full bg-zinc-100 dark:bg-zinc-700 text-zinc-700 dark:text-zinc-200 hover:bg-zinc-200 dark:hover:bg-zinc-600 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+            <span aria-hidden="true">×</span>
+          </button>
+
+          <div class="px-5 pt-5 pb-3 border-b border-zinc-200 dark:border-zinc-700">
+            <div class="flex items-start justify-between gap-3 pr-10">
+              <div>
+                <h2 id="zc-modal-title" class="text-xl font-bold text-zinc-900 dark:text-zinc-50">${escapeHtml(drink.name)}</h2>
+                <div class="mt-1 text-xs text-zinc-500 dark:text-zinc-400">${escapeHtml(drink.brand)} · ${escapeHtml(drink.category)} · ${drink.volume_ml}ml</div>
+                <p class="mt-2 text-sm text-zinc-600 dark:text-zinc-300">${escapeHtml(drink.tagline)}</p>
+              </div>
+              ${riskChip(top, labels)}
+            </div>
+            <div class="mt-3">${riskBarHTML(drink, ingredientMap, labels)}</div>
+          </div>
+
+          <div class="px-5 py-4">
+            <h3 class="mb-3 text-sm font-semibold text-zinc-900 dark:text-zinc-50">성분표 <span class="text-xs font-normal text-zinc-500">(${ings.length}개)</span></h3>
+            <div class="overflow-x-auto rounded-lg border border-zinc-200 dark:border-zinc-700">
+              <table class="w-full text-left">
+                <thead class="bg-zinc-100 dark:bg-zinc-900/50">
+                  <tr>
+                    <th class="px-3 py-2 text-xs font-semibold text-zinc-700 dark:text-zinc-200">성분명 (한/영)</th>
+                    <th class="px-3 py-2 text-xs font-semibold text-zinc-700 dark:text-zinc-200">카테고리</th>
+                    <th class="px-3 py-2 text-xs font-semibold text-zinc-700 dark:text-zinc-200">위험도</th>
+                    <th class="px-3 py-2 text-xs font-semibold text-zinc-700 dark:text-zinc-200">한 줄 요약</th>
+                    <th class="px-3 py-2 text-xs font-semibold text-zinc-700 dark:text-zinc-200">출처</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-zinc-200 dark:divide-zinc-700">
+                  ${ings.map((i) => ingredientRowHTML(i, labels)).join("")}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="px-5 pb-5 pt-2 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-t border-zinc-200 dark:border-zinc-700">
+            <div class="text-xs text-zinc-500 dark:text-zinc-400">
+              ※ 위험도 색은 참고용. 자세한 기준은 <a href="info.html" class="underline hover:text-emerald-600">정보</a> 페이지 참고.
+            </div>
+            <a href="${coupangUrl}" target="_blank" rel="noopener" class="inline-flex items-center justify-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+              <span>🛒</span><span>쿠팡에서 보기</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  let _modalState = null;
+  function closeDrinkDetail() {
+    if (!_modalState) return;
+    const { onKey, prevOverflow } = _modalState;
+    document.removeEventListener("keydown", onKey);
+    const el = document.getElementById("zc-modal-backdrop");
+    if (el && el.parentNode) el.parentNode.removeChild(el);
+    document.body.style.overflow = prevOverflow || "";
+    _modalState = null;
+  }
+
+  async function openDrinkDetail(drinkId) {
+    try {
+      const { drinks, ingredientMap, labels } = await loadAll();
+      const drink = drinks.find((d) => d.id === drinkId);
+      if (!drink) {
+        console.warn(`openDrinkDetail: drink not found id=${drinkId}`);
+        return;
+      }
+      // 기존 모달이 있으면 먼저 닫기
+      if (_modalState) closeDrinkDetail();
+
+      const wrapper = document.createElement("div");
+      wrapper.innerHTML = detailModalHTML(drink, ingredientMap, labels);
+      const node = wrapper.firstElementChild;
+      document.body.appendChild(node);
+
+      const prevOverflow = document.body.style.overflow;
+      document.body.style.overflow = "hidden";
+
+      function onKey(e) {
+        if (e.key === "Escape") closeDrinkDetail();
+      }
+      document.addEventListener("keydown", onKey);
+
+      _modalState = { onKey, prevOverflow };
+
+      // backdrop 클릭 → 닫기 (panel 내부 클릭은 무시)
+      node.addEventListener("click", (e) => {
+        if (e.target === node) closeDrinkDetail();
+      });
+      const closeBtn = node.querySelector("#zc-modal-close");
+      if (closeBtn) closeBtn.addEventListener("click", () => closeDrinkDetail());
+    } catch (e) {
+      console.error("openDrinkDetail error", e);
+    }
+  }
+
+  // 전역 위임 — drinkCard 버튼 클릭 → 모달 오픈
+  function bindDrinkCardClicks(root) {
+    const scope = root || document;
+    scope.addEventListener("click", (e) => {
+      const btn = e.target.closest && e.target.closest(".zc-drink-card");
+      if (!btn) return;
+      const id = btn.getAttribute("data-drink-id");
+      if (!id) return;
+      e.preventDefault();
+      openDrinkDetail(id);
+    });
+  }
+
+  // 페이지 로드 시 자동 바인딩 (한 번만)
+  if (typeof document !== "undefined") {
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", () => bindDrinkCardClicks(document));
+    } else {
+      bindDrinkCardClicks(document);
+    }
   }
 
   function legendHTML(labels) {
@@ -199,6 +366,27 @@
     return { drinkMatches, ingredientMatches };
   }
 
+  // 카테고리별 그룹 (info 페이지에서 사용)
+  function groupIngredientsByCategory(ingredients) {
+    const groups = {};
+    ingredients.forEach((i) => {
+      const k = i.category || "기타";
+      if (!groups[k]) groups[k] = [];
+      groups[k].push(i);
+    });
+    // 각 그룹 내부에서 위험도 정렬 (green → yellow → red)
+    const order = { green: 0, yellow: 1, red: 2 };
+    Object.keys(groups).forEach((k) => {
+      groups[k].sort((a, b) => {
+        const ra = order[a.risk_level] ?? 9;
+        const rb = order[b.risk_level] ?? 9;
+        if (ra !== rb) return ra - rb;
+        return (a.name_ko || "").localeCompare(b.name_ko || "", "ko");
+      });
+    });
+    return groups;
+  }
+
   window.zc = {
     loadAll,
     ingredientsFor,
@@ -210,5 +398,10 @@
     drinkCard,
     legendHTML,
     search,
+    coupangSearchUrl,
+    openDrinkDetail,
+    closeDrinkDetail,
+    bindDrinkCardClicks,
+    groupIngredientsByCategory,
   };
 })();
