@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>검색 · 제로체크</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root { font-family: system-ui, -apple-system, "Apple SD Gothic Neo", "Pretendard", "Noto Sans KR", sans-serif; }
+  </style>
+</head>
+<body class="bg-zinc-50 text-zinc-900 dark:bg-zinc-900 dark:text-zinc-100 min-h-screen flex flex-col">
+  <div id="header-slot"></div>
+
+  <main class="mx-auto w-full max-w-5xl flex-1 px-4 py-6">
+    <section class="mb-6">
+      <h1 class="text-2xl sm:text-3xl font-bold text-zinc-900 dark:text-zinc-50">검색</h1>
+      <p class="mt-1 text-zinc-600 dark:text-zinc-300">음료명·성분명으로 양방향 검색.</p>
+    </section>
+
+    <section class="mb-6">
+      <form id="search-form" class="flex gap-2" action="search.html" method="get">
+        <input
+          type="search"
+          name="q"
+          id="search-input"
+          placeholder="예: 제로콜라, 아스파탐"
+          class="flex-1 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-4 py-2 text-sm placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+        />
+        <button type="submit" class="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-700">검색</button>
+      </form>
+    </section>
+
+    <section id="results" class="space-y-8"></section>
+  </main>
+
+  <div id="footer-slot"></div>
+
+  <script src="assets/app.js"></script>
+  <script src="assets/header.js"></script>
+  <script>
+    (async function () {
+      document.getElementById("header-slot").innerHTML = window.zcChrome.renderHeader("search");
+      try {
+        const { drinks, ingredients, ingredientMap, labels, disclaimer } = await window.zc.loadAll();
+        document.getElementById("footer-slot").innerHTML = window.zcChrome.renderFooter(disclaimer);
+
+        const params = new URLSearchParams(location.search);
+        const initialQ = params.get("q") || "";
+        const input = document.getElementById("search-input");
+        input.value = initialQ;
+
+        const results = document.getElementById("results");
+
+        function render(q) {
+          if (!q || !q.trim()) {
+            results.innerHTML = `<div class="text-sm text-zinc-500">검색어를 입력하세요. (예: 제로콜라, 아스파탐, 카페인)</div>`;
+            return;
+          }
+          const { drinkMatches, ingredientMatches } = window.zc.search(q, drinks, ingredients, ingredientMap);
+
+          const drinkBlock =
+            drinkMatches.length === 0
+              ? ""
+              : `
+                <div>
+                  <h2 class="mb-3 text-lg font-semibold text-zinc-900 dark:text-zinc-50">음료 매치 <span class="text-xs font-normal text-zinc-500">(${drinkMatches.length}개)</span></h2>
+                  <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                    ${drinkMatches.map((d) => window.zc.drinkCard(d, ingredientMap, labels)).join("")}
+                  </div>
+                </div>
+              `;
+
+          const ingredientBlock =
+            ingredientMatches.length === 0
+              ? ""
+              : `
+                <div>
+                  <h2 class="mb-3 text-lg font-semibold text-zinc-900 dark:text-zinc-50">성분 매치 <span class="text-xs font-normal text-zinc-500">(${ingredientMatches.length}개)</span></h2>
+                  <div class="space-y-4">
+                    ${ingredientMatches
+                      .map(
+                        (m) => `
+                          <div class="rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 p-4 shadow-sm">
+                            ${window.zc.ingredientCard(m.ingredient, labels)}
+                            <div class="mt-3">
+                              <div class="mb-2 text-xs text-zinc-500">이 성분이 들어간 음료 <span>${m.drinks.length}개</span></div>
+                              ${
+                                m.drinks.length === 0
+                                  ? `<div class="text-sm text-zinc-500">(현재 데이터에 없음)</div>`
+                                  : `<div class="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">${m.drinks.map((d) => window.zc.drinkCard(d, ingredientMap, labels)).join("")}</div>`
+                              }
+                            </div>
+                          </div>
+                        `
+                      )
+                      .join("")}
+                  </div>
+                </div>
+              `;
+
+          if (!drinkBlock && !ingredientBlock) {
+            results.innerHTML = `<div class="text-sm text-zinc-500">"${q}"에 대한 결과가 없습니다.</div>`;
+            return;
+          }
+
+          results.innerHTML = drinkBlock + ingredientBlock;
+        }
+
+        render(initialQ);
+        input.addEventListener("input", () => render(input.value));
+      } catch (e) {
+        console.error(e);
+        document.getElementById("results").innerHTML = `<div class="text-sm text-red-500">데이터 로드 실패: ${e.message}</div>`;
+        document.getElementById("footer-slot").innerHTML = window.zcChrome.renderFooter("");
+      }
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>비교 · 제로체크</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root { font-family: system-ui, -apple-system, "Apple SD Gothic Neo", "Pretendard", "Noto Sans KR", sans-serif; }
+  </style>
+</head>
+<body class="bg-zinc-50 text-zinc-900 dark:bg-zinc-900 dark:text-zinc-100 min-h-screen flex flex-col">
+  <div id="header-slot"></div>
+
+  <main class="mx-auto w-full max-w-5xl flex-1 px-4 py-6">
+    <section class="mb-6">
+      <h1 class="text-2xl sm:text-3xl font-bold text-zinc-900 dark:text-zinc-50">음료 비교</h1>
+      <p class="mt-1 text-zinc-600 dark:text-zinc-300">두 음료의 성분을 나란히 보고, 공통·차이를 한 눈에.</p>
+    </section>
+
+    <!-- Selector -->
+    <section class="mb-6 grid grid-cols-1 gap-3 sm:grid-cols-2">
+      <div>
+        <label class="block text-xs font-medium text-zinc-500 mb-1">음료 A</label>
+        <select id="select-a" class="w-full rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-3 py-2 text-sm"></select>
+      </div>
+      <div>
+        <label class="block text-xs font-medium text-zinc-500 mb-1">음료 B</label>
+        <select id="select-b" class="w-full rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-3 py-2 text-sm"></select>
+      </div>
+    </section>
+
+    <!-- Summary Bar -->
+    <section id="summary" class="mb-6 grid grid-cols-1 gap-3 sm:grid-cols-2"></section>
+
+    <!-- Diff Section -->
+    <section id="diff" class="space-y-6"></section>
+  </main>
+
+  <div id="footer-slot"></div>
+
+  <script src="assets/app.js"></script>
+  <script src="assets/header.js"></script>
+  <script>
+    (async function () {
+      document.getElementById("header-slot").innerHTML = window.zcChrome.renderHeader("compare");
+      try {
+        const { drinks, ingredientMap, labels, disclaimer } = await window.zc.loadAll();
+        document.getElementById("footer-slot").innerHTML = window.zcChrome.renderFooter(disclaimer);
+
+        const selectA = document.getElementById("select-a");
+        const selectB = document.getElementById("select-b");
+        drinks.forEach((d) => {
+          selectA.insertAdjacentHTML("beforeend", `<option value="${d.id}">${d.name} (${d.brand})</option>`);
+          selectB.insertAdjacentHTML("beforeend", `<option value="${d.id}">${d.name} (${d.brand})</option>`);
+        });
+
+        // Parse query string ?a=...&b=...
+        const params = new URLSearchParams(location.search);
+        const findByQuery = (val) => {
+          if (!val) return null;
+          const lo = val.toLowerCase().replace(/\s+/g, "");
+          return drinks.find(
+            (d) =>
+              d.id === val ||
+              d.name.toLowerCase().includes(val.toLowerCase()) ||
+              d.name.replace(/\s+/g, "").toLowerCase().includes(lo)
+          );
+        };
+        const qa = findByQuery(params.get("a"));
+        const qb = findByQuery(params.get("b"));
+        selectA.value = qa ? qa.id : drinks[0].id;
+        selectB.value = qb ? qb.id : drinks[1].id;
+
+        function render() {
+          const a = drinks.find((d) => d.id === selectA.value);
+          const b = drinks.find((d) => d.id === selectB.value);
+          if (!a || !b) return;
+
+          // Summary cards
+          const summary = document.getElementById("summary");
+          summary.innerHTML = [a, b]
+            .map((d) => {
+              const top = window.zc.highestRisk(d, ingredientMap);
+              return `
+                <div class="rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 p-4 shadow-sm">
+                  <div class="flex items-start justify-between gap-2">
+                    <div>
+                      <div class="text-lg font-bold text-zinc-900 dark:text-zinc-50">${d.name}</div>
+                      <div class="text-xs text-zinc-500">${d.brand} · ${d.category} · ${d.volume_ml}ml</div>
+                    </div>
+                    ${window.zc.riskChip(top, labels)}
+                  </div>
+                  <p class="mt-2 text-sm text-zinc-600 dark:text-zinc-300">${d.tagline}</p>
+                  <div class="mt-3">${window.zc.riskBarHTML(d, ingredientMap, labels)}</div>
+                </div>
+              `;
+            })
+            .join("");
+
+          // Compute diff
+          const idsA = new Set(a.ingredient_ids);
+          const idsB = new Set(b.ingredient_ids);
+          const common = a.ingredient_ids.filter((id) => idsB.has(id));
+          const onlyA = a.ingredient_ids.filter((id) => !idsB.has(id));
+          const onlyB = b.ingredient_ids.filter((id) => !idsA.has(id));
+
+          const ingList = (ids) =>
+            ids.length === 0
+              ? `<div class="text-sm text-zinc-500">(없음)</div>`
+              : `<div class="grid grid-cols-1 gap-2 sm:grid-cols-2">${ids
+                  .map((id) => ingredientMap[id])
+                  .filter(Boolean)
+                  .map((i) => window.zc.ingredientCard(i, labels))
+                  .join("")}</div>`;
+
+          document.getElementById("diff").innerHTML = `
+            <div>
+              <h2 class="mb-2 text-lg font-semibold text-zinc-900 dark:text-zinc-50">공통 성분 <span class="text-xs font-normal text-zinc-500">(${common.length}개)</span></h2>
+              ${ingList(common)}
+            </div>
+            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <div>
+                <h2 class="mb-2 text-lg font-semibold text-zinc-900 dark:text-zinc-50">${a.name}만 <span class="text-xs font-normal text-zinc-500">(${onlyA.length}개)</span></h2>
+                ${onlyA.length === 0 ? `<div class="text-sm text-zinc-500">(없음)</div>` : `<div class="grid grid-cols-1 gap-2">${onlyA.map((id) => ingredientMap[id]).filter(Boolean).map((i) => window.zc.ingredientCard(i, labels)).join("")}</div>`}
+              </div>
+              <div>
+                <h2 class="mb-2 text-lg font-semibold text-zinc-900 dark:text-zinc-50">${b.name}만 <span class="text-xs font-normal text-zinc-500">(${onlyB.length}개)</span></h2>
+                ${onlyB.length === 0 ? `<div class="text-sm text-zinc-500">(없음)</div>` : `<div class="grid grid-cols-1 gap-2">${onlyB.map((id) => ingredientMap[id]).filter(Boolean).map((i) => window.zc.ingredientCard(i, labels)).join("")}</div>`}
+              </div>
+            </div>
+          `;
+        }
+
+        selectA.addEventListener("change", render);
+        selectB.addEventListener("change", render);
+        render();
+      } catch (e) {
+        console.error(e);
+        document.getElementById("diff").innerHTML = `<div class="text-sm text-red-500">데이터 로드 실패: ${e.message}</div>`;
+        document.getElementById("footer-slot").innerHTML = window.zcChrome.renderFooter("");
+      }
+    })();
+  </script>
+</body>
+</html>

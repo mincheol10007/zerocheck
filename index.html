@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>🥤 제로체크 (zerocheck) — 제로 음료, 진짜 안심해도 될까?</title>
+  <meta name="description" content="제로 음료 10종의 성분과 위험도를 한 눈에. 음료명·성분명 동시 검색, 음료 2개 비교." />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root { font-family: system-ui, -apple-system, "Apple SD Gothic Neo", "Pretendard", "Noto Sans KR", sans-serif; }
+    html { scroll-behavior: smooth; }
+  </style>
+</head>
+<body class="bg-zinc-50 text-zinc-900 dark:bg-zinc-900 dark:text-zinc-100 min-h-screen flex flex-col">
+  <div id="header-slot"></div>
+
+  <main class="mx-auto w-full max-w-5xl flex-1 px-4 py-6">
+    <!-- Hero -->
+    <section class="mb-6">
+      <h1 class="text-2xl sm:text-3xl font-bold text-zinc-900 dark:text-zinc-50">🥤 제로체크 (zerocheck)</h1>
+      <p class="mt-1 text-zinc-600 dark:text-zinc-300">제로 음료, 진짜 안심해도 될까? 성분 한 눈에.</p>
+    </section>
+
+    <!-- Search bar -->
+    <section class="mb-6">
+      <form id="search-form" class="flex gap-2" action="search.html" method="get">
+        <input
+          type="search"
+          name="q"
+          id="search-input"
+          placeholder="음료명·성분명으로 검색 (예: 제로콜라, 아스파탐)"
+          class="flex-1 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-4 py-2 text-sm placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+        />
+        <button type="submit" class="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-700">검색</button>
+      </form>
+      <div id="quick-results" class="mt-2"></div>
+    </section>
+
+    <!-- Drink Grid -->
+    <section>
+      <h2 class="mb-3 text-lg font-semibold text-zinc-900 dark:text-zinc-50">제로 음료 10종</h2>
+      <div id="drinks-grid" class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        <div class="text-sm text-zinc-500">로딩 중…</div>
+      </div>
+    </section>
+
+    <!-- Legend -->
+    <section class="mt-10">
+      <h2 class="mb-3 text-lg font-semibold text-zinc-900 dark:text-zinc-50">위험도 범례</h2>
+      <div id="legend" class="grid grid-cols-1 gap-2 sm:grid-cols-3"></div>
+    </section>
+  </main>
+
+  <div id="footer-slot"></div>
+
+  <script src="assets/app.js"></script>
+  <script src="assets/header.js"></script>
+  <script>
+    (async function () {
+      document.getElementById("header-slot").innerHTML = window.zcChrome.renderHeader("home");
+      try {
+        const { drinks, ingredients, ingredientMap, labels, disclaimer } = await window.zc.loadAll();
+
+        document.getElementById("drinks-grid").innerHTML = drinks
+          .map((d) => window.zc.drinkCard(d, ingredientMap, labels))
+          .join("");
+
+        document.getElementById("legend").innerHTML = window.zc.legendHTML(labels);
+
+        document.getElementById("footer-slot").innerHTML = window.zcChrome.renderFooter(disclaimer);
+
+        // Quick inline search (live filter)
+        const input = document.getElementById("search-input");
+        const quick = document.getElementById("quick-results");
+        const grid = document.getElementById("drinks-grid");
+        input.addEventListener("input", () => {
+          const q = input.value.trim();
+          if (!q) {
+            grid.innerHTML = drinks.map((d) => window.zc.drinkCard(d, ingredientMap, labels)).join("");
+            quick.innerHTML = "";
+            return;
+          }
+          const { drinkMatches, ingredientMatches } = window.zc.search(q, drinks, ingredients, ingredientMap);
+          // 성분 매치된 음료까지 합치기
+          const drinksFromIngredients = ingredientMatches.flatMap((m) => m.drinks);
+          const allMatched = [...drinkMatches];
+          drinksFromIngredients.forEach((d) => {
+            if (!allMatched.find((x) => x.id === d.id)) allMatched.push(d);
+          });
+          if (allMatched.length === 0) {
+            grid.innerHTML = `<div class="col-span-full text-sm text-zinc-500">매치되는 음료가 없습니다.</div>`;
+          } else {
+            grid.innerHTML = allMatched.map((d) => window.zc.drinkCard(d, ingredientMap, labels)).join("");
+          }
+          if (ingredientMatches.length > 0) {
+            quick.innerHTML = `<div class="text-xs text-zinc-500">성분 매치: ${ingredientMatches.map((m) => m.ingredient.name_ko).join(", ")}</div>`;
+          } else {
+            quick.innerHTML = "";
+          }
+        });
+      } catch (e) {
+        console.error(e);
+        document.getElementById("drinks-grid").innerHTML = `<div class="text-sm text-red-500">데이터 로드 실패: ${e.message}</div>`;
+        document.getElementById("footer-slot").innerHTML = window.zcChrome.renderFooter("");
+      }
+    })();
+  </script>
+</body>
+</html>

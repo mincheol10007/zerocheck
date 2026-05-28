@@ -20,3 +20,6 @@
 - **18:00** 봇 상태 점검: 오티스 ✅ 슬랙 라이브 / 모카 ⚠️ 슬랙 봇 셋업 대기.
 - **18:03** 집사 사인 — 협업 채널 새로 만든다·zerocheck = 캐시+오티스 / 모카 다음 트랙·향후 자율 표준은 별도 트랙.
 - **18:05** REWARD-CONTRACT § 4 변경 필요: Worker 모카 → 캐시 흡수(Next.js sub-agent). 채널 = 집사가 새로 만드는 슬랙 채널. 첫 위임 메시지는 채널 ID 받고 송출.
+- **18:08** ✅ 데이터 V4 PASS — 음료 10·성분 17. `drinks.json`·`ingredients.json`·`risk-labels.json`.
+- **18:11** ✅ git init + 첫 commit + `gh repo create mincheol10007/zerocheck` public → push 완료. https://github.com/mincheol10007/zerocheck
+- **18:11** UI 빌드 sub-agent 백그라운드 띄움 (HTML/JS/Tailwind CDN 정적·index/compare/search 3 페이지). agentId: a3c0fc2c9d3a41667. 완료 알림 대기.
