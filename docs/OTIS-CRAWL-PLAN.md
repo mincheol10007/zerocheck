@@ -170,6 +170,83 @@ HITL (사람 승인 필요):
 
 ---
 
+## 8.5 Phase 2 — 성분 추출 + 위험도 매기기
+
+> Phase 1 (위 § 1~8)은 *수집*까지. Phase 2는 *각 음료의 성분 추출 → ingredients.json 매핑 → 위험도 라벨링*. 오티스 codex/gpt-5.5의 멀티모달·자율 cron 강점이 살아남.
+
+### Phase 2 — Otis Sub-Reward Contract
+
+**Success:**
+Phase 1로 수집한 각 음료의 *성분표를 추출*하고, 우리 `ingredients.json` 표준에 매핑·신규 성분은 *위험도 1차 분류*까지 제안.
+
+**Verifier (OV6~OV9):**
+- **OV6** 각 음료에 `ingredient_ids[]` 필드 추가 (drinks.json 표준 일치)
+- **OV7** *신규 성분*은 별도 파일 `data/coupang-new-ingredients.json`으로 분리 (캐시 검토 대기)
+- **OV8** 신규 성분 각각에 `risk_proposal: green|yellow|red` + `evidence_note` (한 줄 근거·source URL)
+- **OV9** 환각·날조 0건 — 모든 위험도는 *공개된 기관/연구 근거*만 인용 (WHO/FDA/EFSA/NEJM 등). 근거 못 찾으면 `risk_proposal: "needs-review"`로 표시.
+
+**Stop:** OV6~OV9 PASS / 신규 성분 30개 초과 시 캐시 검토 게이트 / 21:00 절대 마감
+
+### 추출 방법
+
+1. **상품 상세 페이지 크롤** — `https://www.coupang.com/vp/products/{id}` 에서 *상세 이미지·텍스트 영역*의 성분표 영역 식별
+2. **텍스트 추출**:
+   - 텍스트 기반 성분표면 → 정규식·LLM 파싱
+   - 이미지 성분표면 → 오티스 codex *멀티모달*로 OCR (codex는 vision 지원)
+3. **매핑**:
+   - 한글 이름 → ingredients.json `name_ko` 일치
+   - 영문 약어 → `name_en` 일치 (Ace-K = Acesulfame Potassium)
+   - 부분 일치 시 → 신규 성분 후보로 분리
+4. **위험도 1차 분류** (신규 성분만):
+   - codex가 *공개 자료 검색* → 결론·출처 정리
+   - 우리 *위험도 룰* 적용:
+     - 🟢 천연 유래·FDA GRAS·논쟁 거의 없음
+     - 🟡 일부 우려·논쟁·과량 주의
+     - 🔴 명확한 건강 우려 보고
+   - 모호하면 `needs-review`
+
+### 거버넌스 (Phase 2 추가 룰)
+- ❌ 위험도 라벨을 *근거 없이* 박지 않음 — 환각 = 즉시 fail
+- ❌ *의료적 단언* 금지 ("암 유발", "독성" 등 단정 표현 X) — 항상 "보고됨", "연구 진행 중" 같은 *완화된 어조*
+- ✅ 출처 명시 — `source` 필드에 기관·연구·URL
+- ✅ 신규 성분 매핑은 *캐시 사인* 후에만 ingredients.json에 머지
+
+### 산출물 형식
+```json
+// data/coupang-new-ingredients.json
+{
+  "schema_version": "1.0",
+  "crawled_at": "2026-05-28T20:00:00+09:00",
+  "ingredients": [
+    {
+      "id": "isomaltulose",
+      "name_ko": "이소말툴로스",
+      "name_en": "Isomaltulose",
+      "category_proposal": "희소당",
+      "risk_proposal": "green",
+      "summary": "혈당 영향이 설탕보다 낮은 천연당. EFSA 안전 평가 통과.",
+      "evidence_note": "EFSA Scientific Opinion 2007 — 안전 결론",
+      "source": "https://efsa.europa.eu/en/efsajournal/pub/523",
+      "found_in_drinks": ["coupang-XXXX"]
+    }
+  ]
+}
+```
+
+### Phase 2 위임 메시지 (Phase 1 끝나면 캐시가 추가 송출)
+
+```
+🦉 오티스, Phase 2 위임.
+
+목표: Phase 1 수집 음료들의 *성분 추출 + 위험도 1차 분류*.
+명세: docs/OTIS-CRAWL-PLAN.md § 8.5 풀로 읽기.
+검증: OV6~OV9.
+산출물: data/coupang-new-ingredients.json (PR)
+주의: 환각 = 즉시 fail. 근거 없으면 needs-review로.
+```
+
+---
+
 ## 9. 위임 후 예상 시나리오
 
 | 결과 | 처리 |

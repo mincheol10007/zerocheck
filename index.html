@@ -36,6 +36,42 @@
       <div id="quick-results" class="mt-2"></div>
     </section>
 
+    <!-- Filter + Sort Toolbar -->
+    <section class="mb-4">
+      <div class="rounded-xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 p-3 shadow-sm">
+        <!-- Sort row -->
+        <div class="flex flex-wrap items-center gap-2">
+          <span class="text-xs font-semibold text-zinc-500 dark:text-zinc-400 mr-1">정렬</span>
+          <button type="button" data-sort="default" class="zc-sort-btn rounded-full border border-zinc-300 dark:border-zinc-600 px-3 py-1 text-xs hover:bg-zinc-100 dark:hover:bg-zinc-700">기본순</button>
+          <button type="button" data-sort="safe" class="zc-sort-btn rounded-full border border-zinc-300 dark:border-zinc-600 px-3 py-1 text-xs hover:bg-zinc-100 dark:hover:bg-zinc-700">🟢 안심순</button>
+          <button type="button" data-sort="low-bad" class="zc-sort-btn rounded-full border border-zinc-300 dark:border-zinc-600 px-3 py-1 text-xs hover:bg-zinc-100 dark:hover:bg-zinc-700">🟡 주의순</button>
+          <button type="button" data-sort="danger" class="zc-sort-btn rounded-full border border-zinc-300 dark:border-zinc-600 px-3 py-1 text-xs hover:bg-zinc-100 dark:hover:bg-zinc-700">🔴 위험순</button>
+        </div>
+
+        <!-- Quick filters -->
+        <div class="mt-3 flex flex-wrap items-center gap-2">
+          <span class="text-xs font-semibold text-zinc-500 dark:text-zinc-400 mr-1">빠른필터</span>
+          <button type="button" data-quick="naturalOnly" class="zc-quick-btn rounded-full border border-emerald-300 dark:border-emerald-700 bg-emerald-50 dark:bg-emerald-900/30 px-3 py-1 text-xs font-semibold text-emerald-800 dark:text-emerald-200 hover:bg-emerald-100 dark:hover:bg-emerald-900/50">🌿 천연감미료/희소당으로만</button>
+          <button type="button" data-quick="noArtificial" class="zc-quick-btn rounded-full border border-amber-300 dark:border-amber-700 bg-amber-50 dark:bg-amber-900/30 px-3 py-1 text-xs font-semibold text-amber-800 dark:text-amber-200 hover:bg-amber-100 dark:hover:bg-amber-900/50">❌ 인공감미료 free</button>
+          <button type="button" data-quick="noCaffeine" class="zc-quick-btn rounded-full border border-sky-300 dark:border-sky-700 bg-sky-50 dark:bg-sky-900/30 px-3 py-1 text-xs font-semibold text-sky-800 dark:text-sky-200 hover:bg-sky-100 dark:hover:bg-sky-900/50">☕ 무카페인</button>
+        </div>
+
+        <!-- Category filter toggle + result counter -->
+        <div class="mt-3 flex flex-wrap items-center justify-between gap-2">
+          <button type="button" id="zc-cat-toggle" class="text-xs font-semibold text-emerald-700 dark:text-emerald-400 hover:underline" aria-expanded="false">
+            <span id="zc-cat-toggle-text">+ 성분 카테고리 필터 펼치기</span>
+          </button>
+          <div class="flex items-center gap-2">
+            <span id="zc-result-counter" class="text-xs text-zinc-500 dark:text-zinc-400">표시 중: – / –</span>
+            <button type="button" id="zc-reset-btn" class="text-xs text-zinc-500 hover:text-emerald-600 dark:hover:text-emerald-400 underline">초기화</button>
+          </div>
+        </div>
+
+        <!-- Category checkboxes (initially hidden) -->
+        <div id="zc-cat-panel" class="mt-3 hidden flex-wrap gap-2"></div>
+      </div>
+    </section>
+
     <!-- Drink Grid -->
     <section>
       <h2 class="mb-3 text-lg font-semibold text-zinc-900 dark:text-zinc-50">제로 음료 10종</h2>
@@ -61,43 +97,147 @@
       try {
         const { drinks, ingredients, ingredientMap, labels, disclaimer } = await window.zc.loadAll();
 
-        document.getElementById("drinks-grid").innerHTML = drinks
-          .map((d) => window.zc.drinkCard(d, ingredientMap, labels))
-          .join("");
-
         document.getElementById("legend").innerHTML = window.zc.legendHTML(labels);
-
         document.getElementById("footer-slot").innerHTML = window.zcChrome.renderFooter(disclaimer);
 
-        // Quick inline search (live filter)
-        const input = document.getElementById("search-input");
-        const quick = document.getElementById("quick-results");
         const grid = document.getElementById("drinks-grid");
-        input.addEventListener("input", () => {
-          const q = input.value.trim();
-          if (!q) {
-            grid.innerHTML = drinks.map((d) => window.zc.drinkCard(d, ingredientMap, labels)).join("");
-            quick.innerHTML = "";
-            return;
-          }
-          const { drinkMatches, ingredientMatches } = window.zc.search(q, drinks, ingredients, ingredientMap);
-          // 성분 매치된 음료까지 합치기
-          const drinksFromIngredients = ingredientMatches.flatMap((m) => m.drinks);
-          const allMatched = [...drinkMatches];
-          drinksFromIngredients.forEach((d) => {
-            if (!allMatched.find((x) => x.id === d.id)) allMatched.push(d);
-          });
-          if (allMatched.length === 0) {
-            grid.innerHTML = `<div class="col-span-full text-sm text-zinc-500">매치되는 음료가 없습니다.</div>`;
-          } else {
-            grid.innerHTML = allMatched.map((d) => window.zc.drinkCard(d, ingredientMap, labels)).join("");
-          }
-          if (ingredientMatches.length > 0) {
-            quick.innerHTML = `<div class="text-xs text-zinc-500">성분 매치: ${ingredientMatches.map((m) => m.ingredient.name_ko).join(", ")}</div>`;
-          } else {
-            quick.innerHTML = "";
-          }
+        const counter = document.getElementById("zc-result-counter");
+        const quickResults = document.getElementById("quick-results");
+        const searchInput = document.getElementById("search-input");
+
+        // --- 상태 (in-memory) ---
+        const state = {
+          sort: "default",
+          quick: { naturalOnly: false, noArtificial: false, noCaffeine: false },
+          categories: new Set(),
+          searchQuery: "",
+        };
+
+        // --- 카테고리 패널: ingredients.json에서 베이스 제외하고 dedupe ---
+        const EXCLUDED_CATS = new Set(["베이스"]);
+        const allCategories = Array.from(
+          new Set(ingredients.map((i) => i.category).filter((c) => !EXCLUDED_CATS.has(c)))
+        );
+        // 우선순위: 인공감미료·천연감미료·당알코올·산도조절제·각성제·색소·보존료·향료·아미노산·비타민·희소당
+        const CAT_ORDER = ["인공감미료","천연감미료","당알코올","산도조절제","각성제","색소","보존료","향료","아미노산","비타민","희소당"];
+        allCategories.sort((a, b) => {
+          const ia = CAT_ORDER.indexOf(a); const ib = CAT_ORDER.indexOf(b);
+          if (ia === -1 && ib === -1) return a.localeCompare(b, "ko");
+          if (ia === -1) return 1;
+          if (ib === -1) return -1;
+          return ia - ib;
         });
+
+        const catPanel = document.getElementById("zc-cat-panel");
+        catPanel.innerHTML = allCategories.map((c) => `
+          <label class="zc-cat-chip inline-flex cursor-pointer items-center gap-1 rounded-full border border-zinc-300 dark:border-zinc-600 bg-zinc-50 dark:bg-zinc-900 px-3 py-1 text-xs hover:bg-zinc-100 dark:hover:bg-zinc-700">
+            <input type="checkbox" data-cat="${c}" class="zc-cat-input h-3 w-3 accent-emerald-600" />
+            <span>${c}</span>
+          </label>
+        `).join("");
+
+        // --- 검색어 기반 음료 필터링 (전체 → 검색 매치) ---
+        function applySearch(list) {
+          const q = state.searchQuery.trim();
+          if (!q) { quickResults.innerHTML = ""; return list; }
+          const { drinkMatches, ingredientMatches } = window.zc.search(q, drinks, ingredients, ingredientMap);
+          const merged = [...drinkMatches];
+          ingredientMatches.flatMap((m) => m.drinks).forEach((d) => {
+            if (!merged.find((x) => x.id === d.id)) merged.push(d);
+          });
+          if (ingredientMatches.length > 0) {
+            quickResults.innerHTML = `<div class="text-xs text-zinc-500">성분 매치: ${ingredientMatches.map((m) => m.ingredient.name_ko).join(", ")}</div>`;
+          } else {
+            quickResults.innerHTML = "";
+          }
+          const matchedIds = new Set(merged.map((d) => d.id));
+          return list.filter((d) => matchedIds.has(d.id));
+        }
+
+        // --- 메인 렌더 함수 ---
+        function render() {
+          // 1) 검색 매치
+          let list = applySearch(drinks);
+          // 2) 필터
+          list = window.zc.filterDrinks(list, ingredients, { quick: state.quick, categories: state.categories });
+          // 3) 정렬
+          list = window.zc.sortDrinks(list, ingredientMap, state.sort);
+
+          if (list.length === 0) {
+            grid.innerHTML = `<div class="col-span-full rounded-lg border border-dashed border-zinc-300 dark:border-zinc-600 p-6 text-center text-sm text-zinc-500">조건에 맞는 음료가 없습니다. <button id="zc-empty-reset" class="ml-1 underline hover:text-emerald-600">필터 초기화</button></div>`;
+            const er = document.getElementById("zc-empty-reset");
+            if (er) er.addEventListener("click", resetAll);
+          } else {
+            grid.innerHTML = window.zc.renderDrinks(list, ingredientMap, labels);
+          }
+          counter.textContent = `표시 중: ${list.length} / ${drinks.length}`;
+
+          // 정렬/퀵 버튼 active 상태
+          document.querySelectorAll(".zc-sort-btn").forEach((b) => {
+            const on = b.getAttribute("data-sort") === state.sort;
+            b.classList.toggle("bg-emerald-600", on);
+            b.classList.toggle("text-white", on);
+            b.classList.toggle("border-emerald-600", on);
+          });
+          document.querySelectorAll(".zc-quick-btn").forEach((b) => {
+            const key = b.getAttribute("data-quick");
+            const on = !!state.quick[key];
+            b.setAttribute("aria-pressed", on ? "true" : "false");
+            b.classList.toggle("ring-2", on);
+            b.classList.toggle("ring-emerald-500", on);
+          });
+        }
+
+        function resetAll() {
+          state.sort = "default";
+          state.quick = { naturalOnly: false, noArtificial: false, noCaffeine: false };
+          state.categories = new Set();
+          document.querySelectorAll(".zc-cat-input").forEach((el) => (el.checked = false));
+          render();
+        }
+
+        // --- 이벤트 바인딩 ---
+        document.querySelectorAll(".zc-sort-btn").forEach((b) => {
+          b.addEventListener("click", () => {
+            state.sort = b.getAttribute("data-sort");
+            render();
+          });
+        });
+        document.querySelectorAll(".zc-quick-btn").forEach((b) => {
+          b.addEventListener("click", () => {
+            const k = b.getAttribute("data-quick");
+            state.quick[k] = !state.quick[k];
+            render();
+          });
+        });
+        document.querySelectorAll(".zc-cat-input").forEach((el) => {
+          el.addEventListener("change", () => {
+            const c = el.getAttribute("data-cat");
+            if (el.checked) state.categories.add(c);
+            else state.categories.delete(c);
+            render();
+          });
+        });
+        document.getElementById("zc-reset-btn").addEventListener("click", resetAll);
+
+        const catToggle = document.getElementById("zc-cat-toggle");
+        const catToggleText = document.getElementById("zc-cat-toggle-text");
+        catToggle.addEventListener("click", () => {
+          const hidden = catPanel.classList.contains("hidden");
+          catPanel.classList.toggle("hidden", !hidden);
+          catPanel.classList.toggle("flex", hidden);
+          catToggle.setAttribute("aria-expanded", hidden ? "true" : "false");
+          catToggleText.textContent = hidden ? "− 성분 카테고리 필터 접기" : "+ 성분 카테고리 필터 펼치기";
+        });
+
+        // 검색은 기존 동작 유지 (state에 반영해서 통합 렌더)
+        searchInput.addEventListener("input", () => {
+          state.searchQuery = searchInput.value;
+          render();
+        });
+
+        // 초기 렌더
+        render();
       } catch (e) {
         console.error(e);
         document.getElementById("drinks-grid").innerHTML = `<div class="text-sm text-red-500">데이터 로드 실패: ${e.message}</div>`;

@@ -366,6 +366,120 @@
     return { drinkMatches, ingredientMatches };
   }
 
+  // --- 위험 점수 / 필터 / 정렬 (index 페이지 toolbar) ---
+  // green=0, yellow=1, red=3 가중치. 음료 점수 = 성분 점수 평균.
+  const RISK_SCORE = { green: 0, yellow: 1, red: 3 };
+
+  function calcRiskScore(drink, ingredientMap) {
+    const ings = ingredientsFor(drink, ingredientMap);
+    if (!ings.length) return 0;
+    const sum = ings.reduce((s, i) => s + (RISK_SCORE[i.risk_level] ?? 0), 0);
+    return sum / ings.length;
+  }
+
+  function greenRatio(drink, ingredientMap) {
+    const ings = ingredientsFor(drink, ingredientMap);
+    if (!ings.length) return 0;
+    const g = ings.filter((i) => i.risk_level === "green").length;
+    return g / ings.length;
+  }
+
+  // 인공감미료 카테고리에 속하는 성분 id 집합
+  function ingredientIdsByCategory(ingredients, category) {
+    return new Set(
+      ingredients.filter((i) => i.category === category).map((i) => i.id)
+    );
+  }
+
+  /**
+   * filters = {
+   *   quick: { naturalOnly: bool, noArtificial: bool, noCaffeine: bool },
+   *   categories: Set<string>  // 일반 카테고리 필터 (AND)
+   * }
+   */
+  function filterDrinks(drinks, ingredients, filters) {
+    const f = filters || {};
+    const quick = f.quick || {};
+    const categories = f.categories instanceof Set ? f.categories : new Set(f.categories || []);
+
+    const artificialIds = ingredientIdsByCategory(ingredients, "인공감미료");
+    const naturalSweetIds = new Set([
+      ...ingredientIdsByCategory(ingredients, "천연감미료"),
+      ...ingredientIdsByCategory(ingredients, "희소당"),
+    ]);
+
+    // category -> Set<ingredient id>
+    const catToIds = {};
+    ingredients.forEach((i) => {
+      if (!catToIds[i.category]) catToIds[i.category] = new Set();
+      catToIds[i.category].add(i.id);
+    });
+
+    return drinks.filter((d) => {
+      const ids = d.ingredient_ids;
+
+      // quick: noCaffeine
+      if (quick.noCaffeine && ids.includes("caffeine")) return false;
+
+      // quick: noArtificial (인공감미료 0개)
+      const artCount = ids.filter((id) => artificialIds.has(id)).length;
+      if (quick.noArtificial && artCount > 0) return false;
+
+      // quick: naturalOnly — 인공감미료 0개 + 천연감미료/희소당 ≥1
+      if (quick.naturalOnly) {
+        if (artCount > 0) return false;
+        const natCount = ids.filter((id) => naturalSweetIds.has(id)).length;
+        if (natCount === 0) return false;
+      }
+
+      // categories AND: 선택된 각 카테고리마다 음료에 그 카테고리 성분이 ≥1개 있어야 함
+      for (const cat of categories) {
+        const catIds = catToIds[cat];
+        if (!catIds) return false;
+        const hit = ids.some((id) => catIds.has(id));
+        if (!hit) return false;
+      }
+
+      return true;
+    });
+  }
+
+  /**
+   * mode = "default" | "safe" | "low-bad" | "danger"
+   *   safe     — green 비율 높은 순 (안심순)
+   *   low-bad  — yellow+red 비율 낮은 순 (주의순)
+   *   danger   — 위험 점수 높은 순 (위험순)
+   *   default  — drinks.json 원본 순서
+   */
+  function sortDrinks(drinks, ingredientMap, mode) {
+    const arr = drinks.slice();
+    if (mode === "safe") {
+      // green 비율 desc, tie → score asc
+      arr.sort((a, b) => {
+        const ga = greenRatio(a, ingredientMap);
+        const gb = greenRatio(b, ingredientMap);
+        if (gb !== ga) return gb - ga;
+        return calcRiskScore(a, ingredientMap) - calcRiskScore(b, ingredientMap);
+      });
+    } else if (mode === "low-bad") {
+      // yellow+red 비율 asc = green 비율 desc (≈ safe와 같지만, tie 처리는 score asc)
+      arr.sort((a, b) => {
+        const ba = 1 - greenRatio(a, ingredientMap);
+        const bb = 1 - greenRatio(b, ingredientMap);
+        if (ba !== bb) return ba - bb;
+        return calcRiskScore(a, ingredientMap) - calcRiskScore(b, ingredientMap);
+      });
+    } else if (mode === "danger") {
+      arr.sort((a, b) => calcRiskScore(b, ingredientMap) - calcRiskScore(a, ingredientMap));
+    }
+    // "default": 원본 순서 유지
+    return arr;
+  }
+
+  function renderDrinks(drinks, ingredientMap, labels) {
+    return drinks.map((d) => drinkCard(d, ingredientMap, labels)).join("");
+  }
+
   // 카테고리별 그룹 (info 페이지에서 사용)
   function groupIngredientsByCategory(ingredients) {
     const groups = {};
@@ -398,6 +512,11 @@
     drinkCard,
     legendHTML,
     search,
+    calcRiskScore,
+    greenRatio,
+    filterDrinks,
+    sortDrinks,
+    renderDrinks,
     coupangSearchUrl,
     openDrinkDetail,
     closeDrinkDetail,

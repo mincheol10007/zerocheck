@@ -48,3 +48,18 @@
 - ✅ 쿠팡 Deeplink API 자동 변환 *가능 확인* (API key 필요 — 다음 트랙).
 - 🔄 사이트 보강 sub-agent #2 띄움 (모달·info.html·쿠팡 placeholder). agentId: ada1c78ed2de55c05.
 - ✅ `docs/OTIS-CRAWL-PLAN.md v1.0` 작성 — 보상계약·쿼리·스택·거버넌스·위임 메시지.
+
+## 19:00~ sub-agent #2 완료·재배포·본문 글 초고
+- **19:00** sub-agent #2 (ada1c78ed2de55c05) 완료 — 음료 상세 모달·info.html 성분 사전·쿠팡 검색 placeholder. V2·V3·V5 PASS 유지.
+- **19:02** commit `2ef47ff` + push + `vercel deploy --prod` (5번째 배포).
+- **19:03** V1 재검증 — `/`·`/info.html`·`/compare.html` 모두 200.
+- **19:20** ✅ 본문 글 초고 v1 — `docs/POST-draft.md`. ~3,500자·집사 1인칭·dispatch/mac-mini 톤 혼합. **집사 검토 대기**.
+
+## 19:49 집사 추가 4건
+- (1) 쿠팡 제휴 링크 연결 안내 / (2) 오티스 인계 = 크롤+성분추출+위험도매기기 / (3) Vercel 주소 three 아닌 다른 거 / (4) 메인 화면 안심·주의·위험 + 인공감미료별 소팅·필터.
+
+## 19:55 분배
+- ✅ `docs/COUPANG-AFFILIATE-GUIDE.md v1.0` — 집사 액션(API key 발급) + 캐시 액션(빌드타임 변환) + 거버넌스.
+- ✅ `docs/OTIS-CRAWL-PLAN.md § 8.5 Phase 2` 추가 — 성분 추출·위험도 1차 분류·환각 0건 verifier.
+- 🔄 sub-agent #3 (a00f96301ffcde58c) 띄움 — 위험도 정렬 + 성분 카테고리 필터 + 천연감미료/인공감미료 free/무카페인 퀵필터.
+- 🔍 Vercel CLI 점검 — *zerocheck 프로젝트만 deployment protection 켜짐*. 집사 손 1번 필요 (대시보드 Settings → Deployment Protection → Disabled).
