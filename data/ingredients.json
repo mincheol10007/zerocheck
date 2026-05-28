@@ -1,0 +1,176 @@
+{
+  "schema_version": "1.0",
+  "updated_at": "2026-05-28",
+  "ingredients": [
+    {
+      "id": "aspartame",
+      "name_ko": "아스파탐",
+      "name_en": "Aspartame",
+      "category": "인공감미료",
+      "risk_level": "yellow",
+      "summary": "설탕의 약 200배 단맛. WHO IARC 2B (인체 발암 가능) 분류 (2023).",
+      "detail": "페닐케톤뇨증(PKU) 환자 섭취 주의. 일반인 일일허용 40mg/kg. 논쟁 진행 중.",
+      "source": "WHO IARC 2023 · FDA"
+    },
+    {
+      "id": "sucralose",
+      "name_ko": "수크랄로스",
+      "name_en": "Sucralose",
+      "category": "인공감미료",
+      "risk_level": "yellow",
+      "summary": "설탕의 약 600배 단맛. 고온에서 분해 가능성·장내미생물 영향 연구 중.",
+      "detail": "120℃ 이상 가열 시 일부 분해 보고. 대부분 흡수되지 않고 배출.",
+      "source": "FDA · 2022 장내미생물 연구"
+    },
+    {
+      "id": "ace-k",
+      "name_ko": "아세설팜칼륨",
+      "name_en": "Acesulfame Potassium (Ace-K)",
+      "category": "인공감미료",
+      "risk_level": "yellow",
+      "summary": "설탕의 약 200배 단맛. 다른 감미료와 자주 혼합 사용.",
+      "detail": "안전성에 대한 일부 논쟁 있으나 FDA·EFSA 승인. 체내 대사 안 됨.",
+      "source": "FDA · EFSA"
+    },
+    {
+      "id": "stevia",
+      "name_ko": "스테비아",
+      "name_en": "Stevia",
+      "category": "천연감미료",
+      "risk_level": "green",
+      "summary": "남미 천연 식물 추출 감미료. 논쟁 적고 보편 안전.",
+      "detail": "혈당 영향 거의 없음. 단맛 외에 살짝 쓴맛 잔여.",
+      "source": "FDA GRAS"
+    },
+    {
+      "id": "erythritol",
+      "name_ko": "에리스리톨",
+      "name_en": "Erythritol",
+      "category": "당알코올",
+      "risk_level": "yellow",
+      "summary": "천연 당알코올. 2023 NEJM 연구로 혈전·심혈관 이슈 제기.",
+      "detail": "대부분 흡수되지 않고 배출. 다량 섭취 시 위장 불편.",
+      "source": "Nature Medicine 2023"
+    },
+    {
+      "id": "phosphoric-acid",
+      "name_ko": "인산",
+      "name_en": "Phosphoric Acid",
+      "category": "산도조절제",
+      "risk_level": "yellow",
+      "summary": "콜라류 특유의 신맛. 과량 섭취 시 뼈·치아 건강 우려.",
+      "detail": "장기 다량 섭취 시 칼슘 흡수 방해·치아 부식 가능.",
+      "source": "AJCN 2014 연구"
+    },
+    {
+      "id": "citric-acid",
+      "name_ko": "구연산",
+      "name_en": "Citric Acid",
+      "category": "산도조절제",
+      "risk_level": "green",
+      "summary": "감귤류 자연 유래 산. 안전성 높음.",
+      "detail": "신맛·보존 효과. 대부분 식품에서 흔히 사용.",
+      "source": "FDA GRAS"
+    },
+    {
+      "id": "caffeine",
+      "name_ko": "카페인",
+      "name_en": "Caffeine",
+      "category": "각성제",
+      "risk_level": "yellow",
+      "summary": "각성 효과. 함량에 따라 다름. 임산부·청소년 주의.",
+      "detail": "일일 권장 한도 성인 400mg. 콜라 약 30mg / 에너지드링크 80~160mg.",
+      "source": "식약처 · EFSA"
+    },
+    {
+      "id": "caramel-color",
+      "name_ko": "카라멜 색소",
+      "name_en": "Caramel Color (Class IV)",
+      "category": "색소",
+      "risk_level": "yellow",
+      "summary": "콜라 갈색의 주범. Class IV에서 4-MEI 발암 우려 보고.",
+      "detail": "캘리포니아 Prop 65 경고 대상. 일반 섭취량은 위험 낮음.",
+      "source": "IARC 2B · CA Prop 65"
+    },
+    {
+      "id": "sodium-benzoate",
+      "name_ko": "안식향산나트륨",
+      "name_en": "Sodium Benzoate",
+      "category": "보존료",
+      "risk_level": "red",
+      "summary": "비타민C(아스코르브산)와 만나면 벤젠(발암물질) 생성 가능.",
+      "detail": "FDA 모니터링 대상. 비타민C 함유 음료와 혼합 시 우려.",
+      "source": "FDA 2007 · WHO"
+    },
+    {
+      "id": "artificial-flavor",
+      "name_ko": "인공향료",
+      "name_en": "Artificial Flavor",
+      "category": "향료",
+      "risk_level": "yellow",
+      "summary": "구체 성분 비공개. '향료'라고만 표기되는 영업비밀.",
+      "detail": "수십~수백 화학물질 조합 가능. 추적·표기 의무 약함.",
+      "source": "FDA"
+    },
+    {
+      "id": "natural-flavor",
+      "name_ko": "천연향료",
+      "name_en": "Natural Flavor",
+      "category": "향료",
+      "risk_level": "green",
+      "summary": "자연 유래 향료. 인공향료보다 일반적으로 안전.",
+      "detail": "다만 '천연' 정의가 느슨해 합성 가능성도 있음.",
+      "source": "FDA"
+    },
+    {
+      "id": "sodium-citrate",
+      "name_ko": "구연산나트륨",
+      "name_en": "Sodium Citrate",
+      "category": "산도조절제",
+      "risk_level": "green",
+      "summary": "pH 조절제. 안전성 높음.",
+      "detail": "구연산의 나트륨염. 식품·의약품에 광범위 사용.",
+      "source": "FDA GRAS"
+    },
+    {
+      "id": "taurine",
+      "name_ko": "타우린",
+      "name_en": "Taurine",
+      "category": "아미노산",
+      "risk_level": "green",
+      "summary": "에너지드링크 일반 성분. 자연 유래.",
+      "detail": "체내 합성도 됨. 일반 섭취량 안전.",
+      "source": "EFSA"
+    },
+    {
+      "id": "niacinamide",
+      "name_ko": "니아신아마이드 (비타민B3)",
+      "name_en": "Niacinamide (Vitamin B3)",
+      "category": "비타민",
+      "risk_level": "green",
+      "summary": "필수 비타민. 에너지드링크에 자주 강화.",
+      "detail": "과량 섭취 시 간 부담 가능하나 음료 함량은 안전.",
+      "source": "NIH"
+    },
+    {
+      "id": "water",
+      "name_ko": "정제수",
+      "name_en": "Purified Water",
+      "category": "베이스",
+      "risk_level": "green",
+      "summary": "음료의 90%+ 차지.",
+      "detail": "탄산 음료의 경우 탄산가스 주입.",
+      "source": "-"
+    },
+    {
+      "id": "allulose",
+      "name_ko": "알룰로스",
+      "name_en": "Allulose",
+      "category": "희소당",
+      "risk_level": "green",
+      "summary": "자연 미량 존재. 설탕의 70% 단맛 · 칼로리 거의 0.",
+      "detail": "FDA GRAS · 혈당 영향 적음.",
+      "source": "FDA GRAS"
+    }
+  ]
+}

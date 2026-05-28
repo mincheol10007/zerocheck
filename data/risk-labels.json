@@ -1,0 +1,27 @@
+{
+  "schema_version": "1.0",
+  "labels": {
+    "green": {
+      "emoji": "🟢",
+      "label_ko": "안전",
+      "label_en": "Safe",
+      "color": "#10b981",
+      "summary": "일반적으로 안전. 보편적으로 인정된 식품 성분."
+    },
+    "yellow": {
+      "emoji": "🟡",
+      "label_ko": "주의",
+      "label_en": "Caution",
+      "color": "#f59e0b",
+      "summary": "일부 우려·논쟁 있음. 과량 또는 특정 조건에서 주의."
+    },
+    "red": {
+      "emoji": "🔴",
+      "label_ko": "위험",
+      "label_en": "Concern",
+      "color": "#ef4444",
+      "summary": "건강 우려 보고됨. 가급적 줄이거나 피할 것 권장."
+    }
+  },
+  "disclaimer": "이 사이트의 위험도 등급은 *공식 의료·식품 가이드*가 아닌, 공개된 연구·기관 자료를 정리한 *참고용*입니다. 개별 건강 상황은 전문가와 상담하세요."
+}

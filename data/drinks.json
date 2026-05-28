@@ -1,0 +1,97 @@
+{
+  "schema_version": "1.0",
+  "updated_at": "2026-05-28",
+  "source": "수동 입력 (1차) + 쿠팡 크롤 fallback 예정",
+  "drinks": [
+    {
+      "id": "coca-zero",
+      "name": "코카콜라 제로",
+      "brand": "코카콜라",
+      "category": "콜라",
+      "volume_ml": 355,
+      "ingredient_ids": ["water", "caramel-color", "phosphoric-acid", "aspartame", "ace-k", "caffeine", "sodium-citrate", "natural-flavor"],
+      "tagline": "오리지널 콜라 맛 · 칼로리 0"
+    },
+    {
+      "id": "pepsi-zero-lime",
+      "name": "펩시 제로슈가 라임",
+      "brand": "펩시코",
+      "category": "콜라",
+      "volume_ml": 355,
+      "ingredient_ids": ["water", "caramel-color", "phosphoric-acid", "aspartame", "ace-k", "caffeine", "citric-acid", "natural-flavor"],
+      "tagline": "라임 향 · 칼로리 0"
+    },
+    {
+      "id": "chilsung-cider-zero",
+      "name": "칠성사이다 제로",
+      "brand": "롯데칠성",
+      "category": "사이다",
+      "volume_ml": 355,
+      "ingredient_ids": ["water", "citric-acid", "sucralose", "ace-k", "sodium-citrate", "natural-flavor"],
+      "tagline": "탄산 사이다 · 칼로리 0 · 무카페인"
+    },
+    {
+      "id": "sprite-zero",
+      "name": "스프라이트 제로",
+      "brand": "코카콜라",
+      "category": "사이다",
+      "volume_ml": 355,
+      "ingredient_ids": ["water", "citric-acid", "aspartame", "ace-k", "sodium-citrate", "natural-flavor"],
+      "tagline": "레몬·라임 · 무카페인"
+    },
+    {
+      "id": "dr-pepper-zero",
+      "name": "닥터페퍼 제로",
+      "brand": "코카콜라",
+      "category": "콜라",
+      "volume_ml": 355,
+      "ingredient_ids": ["water", "caramel-color", "phosphoric-acid", "aspartame", "caffeine", "sodium-benzoate", "artificial-flavor"],
+      "tagline": "23가지 향 블렌드"
+    },
+    {
+      "id": "monster-zero",
+      "name": "몬스터 제로 슈가",
+      "brand": "몬스터",
+      "category": "에너지",
+      "volume_ml": 355,
+      "ingredient_ids": ["water", "citric-acid", "taurine", "caffeine", "sucralose", "ace-k", "niacinamide", "sodium-citrate", "artificial-flavor"],
+      "tagline": "강력 에너지 · 칼로리 0"
+    },
+    {
+      "id": "redbull-sf",
+      "name": "레드불 슈가프리",
+      "brand": "레드불",
+      "category": "에너지",
+      "volume_ml": 250,
+      "ingredient_ids": ["water", "citric-acid", "taurine", "caffeine", "aspartame", "ace-k", "niacinamide", "natural-flavor"],
+      "tagline": "에너지드링크 원조 · 칼로리 0"
+    },
+    {
+      "id": "fanta-zero",
+      "name": "환타 오렌지 제로",
+      "brand": "코카콜라",
+      "category": "탄산",
+      "volume_ml": 355,
+      "ingredient_ids": ["water", "citric-acid", "aspartame", "ace-k", "sodium-benzoate", "natural-flavor"],
+      "tagline": "오렌지 향 · 무카페인 · 칼로리 0"
+    },
+    {
+      "id": "powerade-zero",
+      "name": "파워에이드 제로",
+      "brand": "코카콜라",
+      "category": "스포츠",
+      "volume_ml": 600,
+      "ingredient_ids": ["water", "citric-acid", "sucralose", "ace-k", "sodium-citrate", "natural-flavor"],
+      "tagline": "이온 음료 · 무카페인 · 칼로리 0"
+    },
+    {
+      "id": "gatorade-zero",
+      "name": "게토레이 제로",
+      "brand": "펩시코",
+      "category": "스포츠",
+      "volume_ml": 591,
+      "ingredient_ids": ["water", "citric-acid", "sucralose", "ace-k", "sodium-citrate", "natural-flavor"],
+      "tagline": "이온 음료 · 무카페인 · 칼로리 0"
+    }
+  ]
+}
