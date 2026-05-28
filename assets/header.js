@@ -34,6 +34,9 @@
       <footer class="mt-12 border-t border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-900/50">
         <div class="mx-auto max-w-5xl px-4 py-6 text-xs text-zinc-600 dark:text-zinc-400">
           <p class="mb-2 leading-relaxed">${disclaimer || ""}</p>
+          <p class="mb-2 leading-relaxed text-zinc-400 dark:text-zinc-500">
+            ※ 이 사이트는 쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받습니다.
+          </p>
           <p class="text-zinc-500">🥤 zerocheck · 2026-05-28</p>
         </div>
       </footer>

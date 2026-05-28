@@ -207,7 +207,7 @@
             </div>
           </div>
 
-          <div class="px-5 pb-5 pt-2 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-t border-zinc-200 dark:border-zinc-700">
+          <div class="px-5 pb-3 pt-2 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-t border-zinc-200 dark:border-zinc-700">
             <div class="text-xs text-zinc-500 dark:text-zinc-400">
               ※ 위험도 색은 참고용. 자세한 기준은 <a href="info.html" class="underline hover:text-emerald-600">정보</a> 페이지 참고.
             </div>
@@ -215,6 +215,10 @@
               <span>🛒</span><span>쿠팡에서 보기${isAffiliate ? '<sup class="ml-1 text-[10px] font-normal opacity-75">제휴</sup>' : ''}</span>
             </a>
           </div>
+          ${isAffiliate ? `
+          <div class="px-5 pb-4 pt-0 text-[10px] leading-relaxed text-zinc-400 dark:text-zinc-500">
+            ※ 이 사이트는 쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받습니다.
+          </div>` : ''}
         </div>
       </div>
     `;
